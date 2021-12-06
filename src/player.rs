@@ -27,6 +27,10 @@ impl Player {
                 VirtualKeyCode::Right => Point::new(1, 0),
                 VirtualKeyCode::Up => Point::new(0, -1),
                 VirtualKeyCode::Down => Point::new(0, 1),
+                VirtualKeyCode::W => Point::new(0, -1),
+                VirtualKeyCode::S => Point::new(0, 1),
+                VirtualKeyCode::A => Point::new(-1, 0),
+                VirtualKeyCode::D => Point::new(1, 0),
                 _ => Point::zero(),
             };
             let new_position = self.position + delta;
