@@ -1,10 +1,10 @@
-mod turn_state;
 mod camera;
 mod components;
 mod map;
 mod map_builder;
 mod spawner;
 mod systems;
+mod turn_state;
 
 mod prelude {
     pub use crate::components::*;
@@ -31,7 +31,7 @@ struct State {
     resources: Resources,
     input_systems: Schedule,
     player_systems: Schedule,
-    monster_systems: Schedule
+    monster_systems: Schedule,
 }
 
 impl State {
@@ -41,7 +41,8 @@ impl State {
         let mut rng = RandomNumberGenerator::new();
         let map_builder = MapBuilder::new(&mut rng);
         spawn_player(&mut ecs, map_builder.player_start);
-        map_builder.rooms
+        map_builder
+            .rooms
             .iter()
             .skip(1)
             .map(|r| r.center())
@@ -68,16 +69,16 @@ impl GameState for State {
         self.resources.insert(ctx.key);
         let current_state = self.resources.get::<TurnState>().unwrap().clone();
         match current_state {
-            TurnState::AwaitingInput => self.input_systems.execute(
-                &mut self.ecs,
-                &mut self.resources
-                                                                  ),
+            TurnState::AwaitingInput => self
+                .input_systems
+                .execute(&mut self.ecs, &mut self.resources),
             TurnState::PlayerTurn => {
-                self.player_systems.execute(&mut self.ecs, &mut self.resources);
-            },
-            TurnState::MonsterTurn => {
-                self.monster_systems.execute(&mut self.ecs, &mut self.resources)
+                self.player_systems
+                    .execute(&mut self.ecs, &mut self.resources);
             }
+            TurnState::MonsterTurn => self
+                .monster_systems
+                .execute(&mut self.ecs, &mut self.resources),
         }
         render_draw_buffer(ctx).expect("Render Error");
     }
